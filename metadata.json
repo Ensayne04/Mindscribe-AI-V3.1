@@ -1,0 +1,6 @@
+{
+  "name": "Task & Focus Workspace",
+  "description": "A beautiful, highly polished, tablet-optimized personal productivity dashboard with task planning, interactive Pomodoro focus timer, and creative visual journal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
