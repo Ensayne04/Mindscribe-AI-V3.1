@@ -1,0 +1,3 @@
+## 2024-05-14 - Compose Recomposition Filtering Bottlenecks
+**Learning:** In Compose UI files (like `TaskPlannerScreen.kt`), raw list filtering operations (e.g., `tasks.filter { ... }`) executed inside the @Composable function body without being wrapped in a `remember` block cause unnecessary O(N) operations during every recomposition (such as when typing in a text field).
+**Action:** When working with large lists or expensive transformations in Jetpack Compose, always wrap the computation in `remember(dependencies...) { ... }` to ensure it only recalculates when the dependencies actually change.
