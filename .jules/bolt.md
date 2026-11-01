@@ -1,0 +1,4 @@
+
+## 2024-11-01 - [Avoid Unmemoized Operations in Timer-Driven Screens]
+**Learning:** A running timer updates UI state frequently (e.g. `timeRemainingSeconds` collected as state). This causes the screen composable (like `DashboardScreen`) to recompose every second. If expensive data formatting (like creating `SimpleDateFormat` or `Calendar` instances) or heavy data processing (like loop-based string operations and Regex parsing for themes) are left unmemoized in such composables, it triggers constant garbage collection thrashing and unnecessary CPU burn on every timer tick.
+**Action:** Always wrap expensive text parsing, heavy collection iteration (e.g. `list.count`), and instantiations of heavy standard library classes (e.g. `Calendar`, `SimpleDateFormat`) inside a `remember` block when writing Jetpack Compose components containing highly volatile state like ticking timers.
