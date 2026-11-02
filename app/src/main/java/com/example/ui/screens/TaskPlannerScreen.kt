@@ -88,14 +88,18 @@ fun TaskPlannerScreen(
     var isPhoneAddFormOpen by remember { mutableStateOf(false) }
 
     // Filter task logic combining completion status and color-coded category
-    val filteredTasks = tasks.filter { task ->
-        val statusMatch = when (selectedFilter) {
-            "Active" -> !task.isCompleted
-            "Completed" -> task.isCompleted
-            else -> true
+    // Optimization: Memoize the filtered tasks list to prevent unnecessary O(N) recalculations
+    // when unrelated state (like input forms for new tasks) changes on every keystroke.
+    val filteredTasks = remember(tasks, selectedFilter, selectedCategoryFilter) {
+        tasks.filter { task ->
+            val statusMatch = when (selectedFilter) {
+                "Active" -> !task.isCompleted
+                "Completed" -> task.isCompleted
+                else -> true
+            }
+            val categoryMatch = if (selectedCategoryFilter == "All") true else task.category.equals(selectedCategoryFilter, ignoreCase = true)
+            statusMatch && categoryMatch
         }
-        val categoryMatch = if (selectedCategoryFilter == "All") true else task.category.equals(selectedCategoryFilter, ignoreCase = true)
-        statusMatch && categoryMatch
     }
 
     // Input States for adding tasks with color-coded categories
