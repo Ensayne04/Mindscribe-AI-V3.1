@@ -1,0 +1,3 @@
+## 2024-05-24 - Unmemoized filtering on Compose form screens
+**Learning:** Found an anti-pattern in `TaskPlannerScreen.kt` where `tasks.filter` was calculated sequentially on every recomposition. Since the form inputs (`taskTitle`, `taskDesc`) are part of the same screen and trigger recomposition on every keystroke, filtering an O(N) list repeatedly caused significant main thread lag, especially if the task list gets large.
+**Action:** Always wrap heavy list filtering operations in Compose with `remember(dependencies) { ... }` when the screen also contains frequent state-changing elements like text fields.
