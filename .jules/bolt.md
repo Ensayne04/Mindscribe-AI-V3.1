@@ -1,3 +1,22 @@
 ## 2024-11-04 - [Memoizing Compose Filters and Hoisting Regexes]
 **Learning:** O(N) list filtering within Compose functions causes performance bottlenecks during frequent recomposition, especially in screens with live state changes. Similarly, compiling a Regex inline inside `.forEach` loops dynamically regenerates the Regex repeatedly instead of caching it, causing huge overhead on large lists.
 **Action:** Always wrap `.filter` operations inside `remember` blocks using appropriate keys, and extract `Regex(...)` instantiations to static properties (e.g., `private val` outside functions/composables) so they are compiled exactly once.
+## 2024-05-19 - [Memory Note]
+**Learning:** Build errors in `MainActivity.kt` and `WorkspaceDatabase.kt` due to experimental APIs and missing parameters.
+**Action:** Out of scope if logically isolated as noted in system memory instructions.
+## 2024-11-04 - Wrap Expensive List Filtering in Jetpack Compose `remember` Blocks
+**Learning:** In Jetpack Compose, doing O(N) list operations like filtering inside a composable without a `remember` block causes the operation to execute on every single recomposition. For instance, `tasks.filter {...}` executed on every keystroke when users typed in form screens because the whole screen recomposed, causing severe main-thread lag.
+**Action:** Always wrap expensive operations like O(N) list filtering (`.filter`) or inline Regex compilations within UI components in `remember` blocks (e.g. `val filteredTasks = remember(tasks, filterCriteria) { tasks.filter { ... } }`) to prevent main-thread lag during frequent recompositions.
+## 2024-05-24 - Unmemoized filtering on Compose form screens
+**Learning:** Found an anti-pattern in `TaskPlannerScreen.kt` where `tasks.filter` was calculated sequentially on every recomposition. Since the form inputs (`taskTitle`, `taskDesc`) are part of the same screen and trigger recomposition on every keystroke, filtering an O(N) list repeatedly caused significant main thread lag, especially if the task list gets large.
+**Action:** Always wrap heavy list filtering operations in Compose with `remember(dependencies) { ... }` when the screen also contains frequent state-changing elements like text fields.
+## 2024-06-25 - Task Filtering Performance
+**Learning:** Re-renders triggered by state variables, when hoisted to the same level as expensive computations (like filtering lists), cause those computations to fire on every keystroke if not memoized.
+**Action:** When implementing new features, ensure that the derived state (like a filtered list) relies only on the required inputs, by using `remember()` combined with variables like lists and selection filters to memoize computations.
+## 2024-05-14 - Compose Recomposition Filtering Bottlenecks
+**Learning:** In Compose UI files (like `TaskPlannerScreen.kt`), raw list filtering operations (e.g., `tasks.filter { ... }`) executed inside the @Composable function body without being wrapped in a `remember` block cause unnecessary O(N) operations during every recomposition (such as when typing in a text field).
+**Action:** When working with large lists or expensive transformations in Jetpack Compose, always wrap the computation in `remember(dependencies...) { ... }` to ensure it only recalculates when the dependencies actually change.
+
+## 2024-11-01 - [Avoid Unmemoized Operations in Timer-Driven Screens]
+**Learning:** A running timer updates UI state frequently (e.g. `timeRemainingSeconds` collected as state). This causes the screen composable (like `DashboardScreen`) to recompose every second. If expensive data formatting (like creating `SimpleDateFormat` or `Calendar` instances) or heavy data processing (like loop-based string operations and Regex parsing for themes) are left unmemoized in such composables, it triggers constant garbage collection thrashing and unnecessary CPU burn on every timer tick.
+**Action:** Always wrap expensive text parsing, heavy collection iteration (e.g. `list.count`), and instantiations of heavy standard library classes (e.g. `Calendar`, `SimpleDateFormat`) inside a `remember` block when writing Jetpack Compose components containing highly volatile state like ticking timers.

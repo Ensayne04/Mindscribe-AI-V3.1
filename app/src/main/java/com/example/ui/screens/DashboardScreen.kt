@@ -132,11 +132,12 @@ fun DashboardScreen(
     var isAiInsightsOpen by remember { mutableStateOf(false) }
 
     val totalTasks = tasks.size
-    val completedTasks = tasks.count { it.isCompleted }
+    val completedTasks = remember(tasks) { tasks.count { it.isCompleted } }
     val totalJournals = journals.size
 
-    val greeting = getGreetingMessage()
-    val todayDate = getTodayDateString()
+    // Memoize greeting and date to prevent Calendar/SimpleDateFormat instantiation on every timer tick
+    val greeting = remember { getGreetingMessage() }
+    val todayDate = remember { getTodayDateString() }
 
     // Screen Layout: Supports both Expanded (Tablet side-by-side) and Custom Compact
     Box(
@@ -1423,13 +1424,16 @@ fun AiInsightsDialog(
     onStartTopic: (com.example.ai.FocusTopicSuggestion) -> Unit = {}
 ) {
     val totalTasks = tasks.size
-    val completedTasks = tasks.count { it.isCompleted }
+    val completedTasks = remember(tasks) { tasks.count { it.isCompleted } }
     val pendingTasks = totalTasks - completedTasks
     val taskEfficiency = if (totalTasks > 0) (completedTasks * 100 / totalTasks) else 100
 
-    val resiliencyScore = calculateResiliencyScore(journals)
-    val recommendation = generateSmartRecommendation(totalTasks, completedTasks, pendingTasks, resiliencyScore)
-    val themes = extractThemes(journals)
+    // Memoize expensive string parsing and object creation
+    val resiliencyScore = remember(journals) { calculateResiliencyScore(journals) }
+    val recommendation = remember(totalTasks, completedTasks, pendingTasks, resiliencyScore) {
+        generateSmartRecommendation(totalTasks, completedTasks, pendingTasks, resiliencyScore)
+    }
+    val themes = remember(journals) { extractThemes(journals) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
