@@ -23,6 +23,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -66,6 +72,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,14 +99,21 @@ fun TaskPlannerScreen(
     var isPhoneAddFormOpen by remember { mutableStateOf(false) }
 
     // Filter task logic combining completion status and color-coded category
-    val filteredTasks = tasks.filter { task ->
-        val statusMatch = when (selectedFilter) {
-            "Active" -> !task.isCompleted
-            "Completed" -> task.isCompleted
-            else -> true
+    // Wrapped in remember to avoid O(N) filtering on every keystroke/recomposition
+    // ⚡ Bolt: Memoize filtered tasks to prevent O(N) re-filtering on every keystroke in task form
+    // Optimization: Memoize the filtered tasks list to prevent unnecessary O(N) recalculations
+    // when unrelated state (like input forms for new tasks) changes on every keystroke.
+    // Bolt: Memoize filtered tasks to prevent unnecessary recalculations on every recomposition
+    val filteredTasks = remember(tasks, selectedFilter, selectedCategoryFilter) {
+        tasks.filter { task ->
+            val statusMatch = when (selectedFilter) {
+                "Active" -> !task.isCompleted
+                "Completed" -> task.isCompleted
+                else -> true
+            }
+            val categoryMatch = if (selectedCategoryFilter == "All") true else task.category.equals(selectedCategoryFilter, ignoreCase = true)
+            statusMatch && categoryMatch
         }
-        val categoryMatch = if (selectedCategoryFilter == "All") true else task.category.equals(selectedCategoryFilter, ignoreCase = true)
-        statusMatch && categoryMatch
     }
 
     // Input States for adding tasks with color-coded categories
@@ -754,6 +772,8 @@ fun TaskEditorPanel(
     onDueDateChange: (Long?) -> Unit = {},
     onSave: () -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -772,10 +792,21 @@ fun TaskEditorPanel(
             label = { Text("Task Title *") },
             maxLines = 1,
             singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("task_title_input"),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            )
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
@@ -784,6 +815,13 @@ fun TaskEditorPanel(
             label = { Text("Task Details / Description") },
             minLines = 2,
             maxLines = 3,
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("task_desc_input"),
