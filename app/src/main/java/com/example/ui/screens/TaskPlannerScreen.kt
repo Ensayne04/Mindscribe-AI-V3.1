@@ -88,6 +88,7 @@ fun TaskPlannerScreen(
     var isPhoneAddFormOpen by remember { mutableStateOf(false) }
 
     // Filter task logic combining completion status and color-coded category
+    // ⚡ Bolt: Memoize filtered tasks to prevent O(N) re-filtering on every keystroke in task form
     // Optimization: Memoize the filtered tasks list to prevent unnecessary O(N) recalculations
     // when unrelated state (like input forms for new tasks) changes on every keystroke.
     // Bolt: Memoize filtered tasks to prevent unnecessary recalculations on every recomposition
