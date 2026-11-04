@@ -1,3 +1,6 @@
+## 2024-11-04 - [Memoizing Compose Filters and Hoisting Regexes]
+**Learning:** O(N) list filtering within Compose functions causes performance bottlenecks during frequent recomposition, especially in screens with live state changes. Similarly, compiling a Regex inline inside `.forEach` loops dynamically regenerates the Regex repeatedly instead of caching it, causing huge overhead on large lists.
+**Action:** Always wrap `.filter` operations inside `remember` blocks using appropriate keys, and extract `Regex(...)` instantiations to static properties (e.g., `private val` outside functions/composables) so they are compiled exactly once.
 ## 2024-05-19 - [Memory Note]
 **Learning:** Build errors in `MainActivity.kt` and `WorkspaceDatabase.kt` due to experimental APIs and missing parameters.
 **Action:** Out of scope if logically isolated as noted in system memory instructions.

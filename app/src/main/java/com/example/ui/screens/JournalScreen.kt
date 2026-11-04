@@ -123,6 +123,10 @@ enum class SpeechTarget {
     FORM_CONTENT
 }
 
+// Performance optimization: Hoisted Regex compilations outside of loops and functions to prevent repeated evaluation overhead
+private val NonAlphaSpaceRegex = Regex("[^a-zA-Z\\s]")
+private val NonAlphaNumRegex = Regex("[^a-zA-Z0-9]")
+
 @Composable
 fun JournalScreen(
     viewModel: WorkspaceViewModel,
@@ -899,7 +903,7 @@ fun JournalScreen(
                                 OutlinedButton(
                                     onClick = {
                                         pendingExportText = JournalExporter.formatSingleJournal(entry)
-                                        val cleanTitle = entry.title.take(15).replace(Regex("[^a-zA-Z0-9]"), "_").ifBlank { "entry" }
+                                        val cleanTitle = entry.title.take(15).replace(NonAlphaNumRegex, "_").ifBlank { "entry" }
                                         exportFileLauncher.launch("journal_$cleanTitle.txt")
                                     },
                                     shape = RoundedCornerShape(12.dp),
@@ -1476,7 +1480,7 @@ private fun generateLocalInsights(entries: List<JournalEntity>): LocalHeuristics
     val fillers = setOf("the", "and", "a", "of", "to", "in", "is", "that", "it", "for", "on", "with", "as", "i", "my", "was", "we", "but", "me", "this", "you", "not", "have", "had", "will")
     entries.forEach { entry ->
         val words = entry.content.lowercase()
-            .replace(Regex("[^a-zA-Z\\s]"), "")
+            .replace(NonAlphaSpaceRegex, "")
             .split(" ")
         words.forEach { w ->
             val clean = w.trim()
