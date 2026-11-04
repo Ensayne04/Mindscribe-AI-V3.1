@@ -1736,12 +1736,15 @@ private fun generateSmartRecommendation(
     }
 }
 
+// Performance optimization: Hoisted Regex outside of function to avoid compiling it in the loop
+private val NonAlphaRegex = Regex("[^a-zA-Z]")
+
 private fun extractThemes(entries: List<JournalEntity>): List<String> {
     if (entries.isEmpty()) return listOf("FOCUS", "MINDFULNESS", "CLARITY")
     val words = mutableMapOf<String, Int>()
     val stopWords = setOf("the", "and", "a", "to", "in", "is", "of", "it", "with", "for", "on", "my", "was", "this", "that", "i", "at", "as", "by")
     entries.forEach { entry ->
-        entry.content.lowercase().split(Regex("[^a-zA-Z]")).forEach { word ->
+        entry.content.lowercase().split(NonAlphaRegex).forEach { word ->
             val clean = word.trim()
             if (clean.length > 3 && clean !in stopWords) {
                 words[clean] = (words[clean] ?: 0) + 1
