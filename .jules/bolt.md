@@ -1,0 +1,3 @@
+## 2024-11-04 - Wrap Expensive List Filtering in Jetpack Compose `remember` Blocks
+**Learning:** In Jetpack Compose, doing O(N) list operations like filtering inside a composable without a `remember` block causes the operation to execute on every single recomposition. For instance, `tasks.filter {...}` executed on every keystroke when users typed in form screens because the whole screen recomposed, causing severe main-thread lag.
+**Action:** Always wrap expensive operations like O(N) list filtering (`.filter`) or inline Regex compilations within UI components in `remember` blocks (e.g. `val filteredTasks = remember(tasks, filterCriteria) { tasks.filter { ... } }`) to prevent main-thread lag during frequent recompositions.
