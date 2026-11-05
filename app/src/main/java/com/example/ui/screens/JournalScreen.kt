@@ -580,7 +580,7 @@ fun JournalScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = if (isMobileInsightsVisible) "Hide Insights" else "Offline AI",
+                                text = if (isMobileInsightsVisible) "Hide Insights" else "Insights",
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -1120,7 +1120,7 @@ fun LocalAiInsightsEngine(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Mental Resiliency Index",
+                        text = "Mood Score",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         color = Color(0xFFE6E1E5)
                     )

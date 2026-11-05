@@ -426,7 +426,7 @@ fun LocalAiEnginePanel(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "100% OFFLINE LOCAL INFERENCE",
+                    text = "Calculated on your device",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontSize = 9.sp,
                         fontWeight = FontWeight.ExtraBold,
