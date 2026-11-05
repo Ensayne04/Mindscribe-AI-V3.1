@@ -800,11 +800,8 @@ fun TaskEditorPanel(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("task_title_input"),
-            shape = RoundedCornerShape(12.dp),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            )
+            shape = RoundedCornerShape(12.dp)
+
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
