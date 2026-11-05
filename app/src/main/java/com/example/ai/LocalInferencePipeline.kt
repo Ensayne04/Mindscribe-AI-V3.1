@@ -44,7 +44,7 @@ data class LocalInferenceReport(
     val dailySummary: DailySummaryResult,
     val suggestedTopics: List<FocusTopicSuggestion>,
     val inferenceTimeMs: Long,
-    val modelName: String = "ZenSync Optimized Local Neural-Semantic Pipeline v2.4 (Quantized)"
+    val modelName: String = "on device",
 )
 
 /**
@@ -111,7 +111,7 @@ object LocalInferencePipeline {
         if (journals.isEmpty()) {
             return DailySummaryResult(
                 dateLabel = "Today",
-                executiveSummary = "No reflection notes logged yet. Log your thoughts or voice dictations to trigger automatic daily synthesis and mental resiliency analytics.",
+                executiveSummary = "No reflection notes logged yet. Log your thoughts or voice dictations to trigger automatic daily synthesis and insights.",
                 keyTakeaways = listOf(
                     "Capture a 2-minute thought to begin your cognitive baseline",
                     "Offline models track mood evolution and energy levels privately"

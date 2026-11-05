@@ -72,10 +72,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.focus.FocusDirection
+
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -803,11 +800,8 @@ fun TaskEditorPanel(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("task_title_input"),
-            shape = RoundedCornerShape(12.dp),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            )
+            shape = RoundedCornerShape(12.dp)
+
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
