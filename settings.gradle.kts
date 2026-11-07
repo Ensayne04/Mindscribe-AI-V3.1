@@ -14,5 +14,5 @@ pluginManagement {
         }
     }
 
-    rootProject.name = "TaskWorkspace" // You can change this to your actual project folder name
+    rootProject.name = "MindScribe" // You can change this to your actual project folder name
     include(":app")

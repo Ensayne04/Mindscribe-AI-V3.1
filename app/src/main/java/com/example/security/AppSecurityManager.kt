@@ -10,8 +10,8 @@ class AppSecurityManager(context: Context) {
 
     companion object {
         const val PREFS_NAME = "offline_workspace_security_prefs"
-        const val KEY_APP_LOCK_ENABLED = "key_app_lock_enabled"
-        const val KEY_BIOMETRIC_ENABLED = "key_biometric_enabled"
+        const val KEY_APP_LOCK_ENABLED = "key_app_lock_disabled"
+        const val KEY_BIOMETRIC_ENABLED = "key_biometric_disabled"
         const val KEY_PIN_HASH = "key_pin_hash"
         const val DEFAULT_PIN = "1234"
 
@@ -28,20 +28,20 @@ class AppSecurityManager(context: Context) {
             prefs.edit().putString(KEY_PIN_HASH, hashPin(DEFAULT_PIN)).apply()
         }
         if (!prefs.contains(KEY_APP_LOCK_ENABLED)) {
-            prefs.edit().putBoolean(KEY_APP_LOCK_ENABLED, true).apply()
+            prefs.edit().putBoolean(KEY_APP_LOCK_ENABLED, false).apply()
         }
         if (!prefs.contains(KEY_BIOMETRIC_ENABLED)) {
-            prefs.edit().putBoolean(KEY_BIOMETRIC_ENABLED, true).apply()
+            prefs.edit().putBoolean(KEY_BIOMETRIC_ENABLED, false).apply()
         }
     }
 
-    fun isAppLockEnabled(): Boolean = prefs.getBoolean(KEY_APP_LOCK_ENABLED, true)
+    fun isAppLockEnabled(): Boolean = prefs.getBoolean(KEY_APP_LOCK_ENABLED, false)
 
     fun setAppLockEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_APP_LOCK_ENABLED, enabled).apply()
     }
 
-    fun isBiometricEnabled(): Boolean = prefs.getBoolean(KEY_BIOMETRIC_ENABLED, true)
+    fun isBiometricEnabled(): Boolean = prefs.getBoolean(KEY_BIOMETRIC_ENABLED, false)
 
     fun setBiometricEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_BIOMETRIC_ENABLED, enabled).apply()
@@ -59,8 +59,7 @@ class AppSecurityManager(context: Context) {
     }
 
     fun changePin(oldPin: String, newPin: String): Boolean {
-        if (!verifyPin(oldPin)) return false
-        return setPin(newPin)
+        return verifyPin(oldPin) && setPin(newPin)
     }
 
     fun resetPinToDefault() {
