@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "com.example"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.aistudio.taskworkspace.vwpqzx"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 5
-        versionName = "5.0"
+        targetSdk = 36
+        versionCode = 6
+        versionName = "6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
