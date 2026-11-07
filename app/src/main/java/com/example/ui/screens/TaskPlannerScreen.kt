@@ -41,7 +41,6 @@ import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.IncompleteCircle
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
@@ -109,7 +108,7 @@ fun TaskPlannerScreen(
                 "Completed" -> task.isCompleted
                 else -> true
             }
-            val categoryMatch = if (selectedCategoryFilter == "All") true else task.category.equals(selectedCategoryFilter, ignoreCase = true)
+            val categoryMatch = selectedCategoryFilter == "All" || task.category.equals(selectedCategoryFilter, ignoreCase = true)
             statusMatch && categoryMatch
         }
     }
